@@ -1,0 +1,53 @@
+@import '../../variables.scss';
+
+:export {
+  mobileBreakpoint: $mobileBreakpoint;
+}
+
+
+.header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.headerText {
+  position: relative;
+
+  &:before {
+    display: block;
+    position: absolute;
+    content: '';
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url('../../assets/goku.jpg');
+    background-position: top left; 
+    filter: blur(4px);
+    z-index: -1;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  padding: 40px;
+}
+
+.image {
+  width: 100%;
+  align-self: flex-start;
+}
+
+@media (min-width: $mobileBreakpoint) {
+  .header {
+    flex-direction: row;
+  }
+  .headerText {
+    flex-grow: 1;
+  }
+  .image {
+    width: 60%;
+  }
+}

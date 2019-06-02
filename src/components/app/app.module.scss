@@ -1,0 +1,17 @@
+@import '../../variables.scss';
+
+
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  max-width: $containerWidth;
+  flex-grow: 1;
+}

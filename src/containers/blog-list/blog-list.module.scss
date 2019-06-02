@@ -1,0 +1,35 @@
+@import '../../colours.scss';
+@import '../../variables.scss';
+@import '../../mixins.scss';
+
+.loading {
+  margin: 20px;
+}
+
+.blogList {
+  padding: 20px;
+  list-style: none;
+  margin: 0;
+
+  @media (min-width: $containerWidth) {
+    padding: 20px 0px;
+  }
+}
+
+.link {
+  display: block;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 2px 2px 2px black;
+  color: black;
+  text-decoration: none;
+}
+
+.likedBlog {
+  background: $primaryColour;
+}
+
+.button {
+  @include button($primaryColour, $secondaryColour);
+  margin: 20px;
+}
