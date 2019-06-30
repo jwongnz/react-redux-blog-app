@@ -8,13 +8,13 @@ import * as serviceWorker from './serviceWorker';
 import rootReducer from './store';
 import { saveState, loadState } from './localStorage';
 import throttle from 'lodash/throttle';
-import ReduxPromise from 'redux-promise';
+import thunk from 'redux-thunk';
 
 const persistedState = loadState();
 const store = createStore(
   rootReducer,
   persistedState,
-  applyMiddleware(ReduxPromise)
+  applyMiddleware(thunk)
 );
 
 store.subscribe(throttle(() => {

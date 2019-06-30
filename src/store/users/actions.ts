@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { FETCH_USER, User } from "./types";
+import { Dispatch } from 'redux';
 
-export function fetchUser(id: number) {
-  const promise = axios.get<User>(`https://jsonplaceholder.typicode.com/users/${id}`);
+export const fetchUser = (id: number) => async (dispatch: Dispatch) => {
+  const response = await axios.get<User>(`https://jsonplaceholder.typicode.com/users/${id}`);
 
-  return {
-    type: FETCH_USER,
-    payload: promise
-  };
-}
+  dispatch({ type: FETCH_USER, payload: response });
+};

@@ -14,8 +14,8 @@ interface MatchParams {
 }
 
 interface AppProps extends RouteComponentProps<MatchParams> {
-  fetchBlog: typeof fetchBlog
-  fetchUser: typeof fetchUser
+  fetchBlog: any
+  fetchUser: any
   likeBlog: typeof likeBlog
   blogsWithUsers: NormalizedBlogsWithUsers
 }

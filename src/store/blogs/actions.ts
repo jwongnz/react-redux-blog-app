@@ -1,27 +1,18 @@
 import axios from 'axios';
 import { LIKE_BLOG, FETCH_BLOGS, FETCH_BLOG, Blog } from "./types";
+import { Dispatch } from 'redux';
 
-export function fetchBlogs() {
-  const promise = getBlogs();
+export const fetchBlogs = () => async (dispatch: Dispatch) => {
+  const response = await axios.get<Blog[]>('https://jsonplaceholder.typicode.com/posts');
 
-  return {
-    type: FETCH_BLOGS,
-    payload: promise
-  };
-}
+  dispatch({ type: FETCH_BLOGS, payload: response });
+};
 
-export function fetchBlog(id: string = '') {
-  const promise = getBlogs(id);
+export const fetchBlog = (id: string = '') => async (dispatch: Dispatch) => {
+  const response = await axios.get<Blog[]>(`https://jsonplaceholder.typicode.com/posts/${id}`);
 
-  return {
-    type: FETCH_BLOG,
-    payload: promise
-  };
-}
-
-export function getBlogs(id: string = '') {
-  return axios.get<Blog[]>(`https://jsonplaceholder.typicode.com/posts/${id}`);
-}
+  dispatch({ type: FETCH_BLOG, payload: response });
+};
 
 export function likeBlog(blogId: string) {
   return {
