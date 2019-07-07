@@ -12,9 +12,10 @@ const BlogList: React.FC = () => {
   const blogs = useSelector((state: AppState) => Object.keys(state.blogs).map(key => state.blogs[Number(key)]), shallowEqual);
   const dispatch = useDispatch();
 
+  // TODO: Get linter to stop complaining about missing dependency when trying to use empty array as 2nd param
   useEffect(() => {
     dispatch(fetchBlogs());
-  }, []);
+  }, [dispatch]);
 
   const renderBlog = (blog: Blog) => {
     return  <li key={blog.id}>
@@ -26,8 +27,9 @@ const BlogList: React.FC = () => {
   }
 
   const showMore = () => {
-    setNumberOfBlogsShowing(numberOfBlogsShowing + 10);
-    // this.setState((state) => ({...state, numberOfBlogsShowing: state.numberOfBlogsShowing + 10}));
+    // showMore just shows more instead of fetching, we fetch all blogs on the first load.
+    // it's because it's just a code test and the API doesn't support take/skip params.
+    setNumberOfBlogsShowing(state => state + 10);
   }
 
   if (!(blogs && blogs.length > 0)) {

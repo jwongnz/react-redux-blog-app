@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { LIKE_BLOG, FETCH_BLOGS, FETCH_BLOG, Blog } from "./types";
+import { fetchUser } from '../users/actions';
+import { LIKE_BLOG, FETCH_BLOGS, FETCH_BLOG, Blog } from './types';
 import { Dispatch } from 'redux';
 
 export const fetchBlogs = () => async (dispatch: Dispatch) => {
@@ -8,15 +9,17 @@ export const fetchBlogs = () => async (dispatch: Dispatch) => {
   dispatch({ type: FETCH_BLOGS, payload: response });
 };
 
-export const fetchBlog = (id: string = '') => async (dispatch: Dispatch) => {
-  const response = await axios.get<Blog[]>(`https://jsonplaceholder.typicode.com/posts/${id}`);
+export const fetchBlog = (id: string | number = '') => async (dispatch: Dispatch) => {
+  const response = await axios.get<Blog>(`https://jsonplaceholder.typicode.com/posts/${id}`);
 
-  dispatch({ type: FETCH_BLOG, payload: response });
+  await dispatch({ type: FETCH_BLOG, payload: response });
+
+  fetchUser(response.data.userId)(dispatch);
 };
 
-export function likeBlog(blogId: string) {
+export function likeBlog(id: string | number) {
   return {
     type: LIKE_BLOG,
-    blogId: blogId
+    blogId: id
   };
 }

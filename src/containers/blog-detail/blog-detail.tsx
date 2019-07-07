@@ -1,10 +1,10 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styles from './blog-detail.module.scss';
 import { AppState } from '../../store';
 import { fetchBlog, likeBlog } from '../../store/blogs/actions';
 import { fetchUser } from '../../store/users/actions';
-import { NormalizedBlogsWithUsers, BlogWithUser } from '../../store/blogs/types';
+import { BlogWithUser } from '../../store/blogs/types';
 import { RouteComponentProps } from 'react-router-dom';
 import BlogsWithUsersSelector from '../../store/blogs/selectors';
 import Header from '../../components/header/header';
@@ -13,35 +13,28 @@ interface MatchParams {
   blogId: string;
 }
 
-interface AppProps extends RouteComponentProps<MatchParams> {
-  fetchBlog: any
-  fetchUser: any
-  likeBlog: typeof likeBlog
-  blogsWithUsers: NormalizedBlogsWithUsers
-}
+const BlogDetail: React.FC<RouteComponentProps<MatchParams>> = (props) => {
+  const blogId = props.match.params.blogId;
+  const blogsWithUsers = useSelector((state: AppState) => BlogsWithUsersSelector(state));
+  const dispatch = useDispatch();
 
-class BlogDetail extends React.Component<AppProps> {
-  blogId: number = Number(this.props.match.params.blogId);
+  useEffect(() => {
+    (async () => {
+      const blog = blogsWithUsers[Number(blogId)];
+  
+      // If blog is not in store from previously fetching blog list, then fetch the blog
+      if (!blog) {
+        // pointless await just to show that you can async await with useEffect
+        await dispatch(fetchBlog(props.match.params.blogId));
+      }
 
-   async componentDidMount() {
-    // If blog is not in store, then fetch the blog
-    if (!this.props.blogsWithUsers[this.blogId]) {
-      await this.props.fetchBlog(this.props.match.params.blogId);
-    }
+      if (blog && !blog.user) {
+        dispatch(fetchUser(blog.userId));
+      }
+    })();
+  }, []);
 
-    const blog = this.props.blogsWithUsers[this.blogId]
-
-    // If user for the blog is not in store, then fetch the user
-    if (!blog.user) {
-      this.props.fetchUser(blog.userId);
-    }
-  }
-
-  likeBlog = () => {
-    this.props.likeBlog(this.props.match.params.blogId);
-  }
-
-  renderBody(blog: BlogWithUser) {
+  const renderBody = (blog: BlogWithUser) => {
     if (!(blog))
       return <div className={styles.container}>Loading...</div>
 
@@ -52,31 +45,23 @@ class BlogDetail extends React.Component<AppProps> {
           <p>{blog.body}</p>
         </div>
 
-        <button type="button" className={styles.button} onClick={this.likeBlog}>
+        <button type="button" className={styles.button} onClick={() => { dispatch(likeBlog(blogId)) }}>
           {blog.isLiked ? 'Unlike' : 'Like'}
         </button>
       </div>
     )
   }
 
-  render() {
-    const blog = this.props.blogsWithUsers[this.blogId];
-    const title = blog && blog.user && blog.user.name;
-    const desc = blog && blog.user && blog.user.company && blog.user.company.name;
+  const blog = blogsWithUsers[Number(blogId)];
+  const title = blog && blog.user && blog.user.name;
+  const desc = blog && blog.user && blog.user.company && blog.user.company.name;
 
-    return (
-      <div className={styles.flexWrapper}>
-        <Header title={title} desc={desc}/>
-        {this.renderBody(blog)}
-      </div>
-    )
-  };
+  return (
+    <div className={styles.flexWrapper}>
+      <Header title={title} desc={desc}/>
+      {renderBody(blog)}
+    </div>
+  )
 }
 
-const mapStateToProps = (state: AppState) => ({
-  blogsWithUsers: BlogsWithUsersSelector(state)
-});
-
-const mapDispatchToProps = { fetchBlog, fetchUser, likeBlog };
-
-export default connect(mapStateToProps, mapDispatchToProps)(BlogDetail);
+export default BlogDetail;
